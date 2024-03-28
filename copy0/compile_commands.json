@@ -1,0 +1,29 @@
+[
+  {
+    "arguments": [
+      "/usr/bin/riscv64-unknown-elf-gcc",
+      "-Wall",
+      "-Werror",
+      "-O",
+      "-fno-omit-frame-pointer",
+      "-ggdb",
+      "-gdwarf-2",
+      "-DSOL_SYSCALL",
+      "-DLAB_SYSCALL",
+      "-mcmodel=medany",
+      "-ffreestanding",
+      "-fno-common",
+      "-mno-relax",
+      "-I.",
+      "-fno-stack-protector",
+      "-fno-pie",
+      "-c",
+      "-o",
+      "kernel/syscall.o",
+      "kernel/syscall.c"
+    ],
+    "directory": "/home/icebing/OCW/MIT6.1810_course/xv6-labs-2023",
+    "file": "/home/icebing/OCW/MIT6.1810_course/xv6-labs-2023/kernel/syscall.c",
+    "output": "/home/icebing/OCW/MIT6.1810_course/xv6-labs-2023/kernel/syscall.o"
+  }
+]
