@@ -47,3 +47,15 @@ You will need a RISC-V "newlib" tool chain from
 https://github.com/riscv/riscv-gnu-toolchain, and qemu compiled for
 riscv64-softmmu.  Once they are installed, and in your shell
 search path, you can run "make qemu".
+
+kalloc 探索历程：
+第一版的代码出现死锁问题
+重新想了一下函数调用链，突然明白暴露给外界的函数才需要锁。
+分清任务管理，暴露给外界的函数只需看锁。而负责具体操作的函数不负责锁。
+第二版 
+kalloc_cpu的id搞混
+bio 探索历程
+原本是用dev编号作为key,后发现brelse接口只有一个block
+用block取余作为编号
+运行时发现缓存块数过多。
+尝试把每个桶的缓存数降低，却总是崩溃。发现是初始化的问题

@@ -1,6 +1,6 @@
-#include "memlayout.h"
 #include "types.h"
 #include "param.h"
+#include "memlayout.h"
 #include "riscv.h"
 #include "spinlock.h"
 #include "proc.h"
@@ -131,13 +131,6 @@ found:
         release(&p->lock);
         return 0;
     }
-    if ((p->usyscallpage = (struct usyscall *)kalloc()) == 0)
-    {
-        freeproc(p);
-        release(&p->lock);
-        return 0;
-    }
-    p->usyscallpage->pid=p->pid;
 
     // An empty user page table.
     p->pagetable = proc_pagetable(p);
@@ -165,16 +158,6 @@ static void freeproc(struct proc *p)
     if (p->trapframe)
         kfree((void *)p->trapframe);
     p->trapframe = 0;
-    // ? usysPgae 不知道物理地址
-    // void *usys_p =(void *) PTE2PA(*walk(p->pagetable, USYSCALL, 0));
-    // if (usys_p)
-    // {
-    //     kfree(usys_p);
-    // }
-    if (p->usyscallpage)
-    {
-        kfree((void *)p->usyscallpage);
-    }
     if (p->pagetable)
         proc_freepagetable(p->pagetable, p->sz);
     p->pagetable = 0;
@@ -218,21 +201,6 @@ pagetable_t proc_pagetable(struct proc *p)
         return 0;
     }
 
-    // struct usyscall *usys_p = (struct usyscall *)kalloc();
-    // if (!usys_p)
-    // {
-    //     freeproc(p);
-    //     release(&p->lock);
-    //     return 0;
-    //     //panic("usysycall me");
-    // }
-    // usys_p->pid = p->pid;
-    if (mappages(pagetable, USYSCALL, PGSIZE, (uint64)p->usyscallpage, PTE_R | PTE_U) < 0)
-    {
-        uvmunmap(pagetable, TRAPFRAME, 1, 0);
-        uvmunmap(pagetable, TRAMPOLINE, 1, 0);
-        uvmfree(pagetable, 0);
-    }
     return pagetable;
 }
 
@@ -242,7 +210,6 @@ void proc_freepagetable(pagetable_t pagetable, uint64 sz)
 {
     uvmunmap(pagetable, TRAMPOLINE, 1, 0);
     uvmunmap(pagetable, TRAPFRAME, 1, 0);
-    uvmunmap(pagetable, USYSCALL, 1, 0);
     uvmfree(pagetable, sz);
 }
 

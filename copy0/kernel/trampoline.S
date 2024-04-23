@@ -1,4 +1,3 @@
-
         #
         # low-level code to handle traps from user space into
         # the kernel, and returns from kernel to user.
@@ -150,4 +149,3 @@ userret:
         # return to user mode and user pc.
         # usertrapret() set up sstatus and sepc.
         sret
-//? sscratch呢？
